@@ -14,7 +14,7 @@
 
         public ArgsParser(List<Command> commands)
         {
-            var fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+            var fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
 
             Header = $"{fileVersion.OriginalFilename} {fileVersion.ProductVersion} - {fileVersion.Comments}\n{fileVersion.LegalCopyright}";
             Commands = commands;
