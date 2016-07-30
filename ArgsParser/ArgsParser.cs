@@ -102,6 +102,11 @@
                 var a = o.GetCustomAttribute<CommandArgAttribute>();
 
                 Console.Write($"  {optionPrefix}{o.Name.PadRight(paddingLen)}    {a.HelpText}");
+                if (o.PropertyType == typeof(bool))
+                {
+                    Console.Write(" (flag)");
+                }
+
                 Console.WriteLine(a.IsRequired ? " (required)\n" : "\n");
             }
         }
