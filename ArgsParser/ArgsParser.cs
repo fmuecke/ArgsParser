@@ -11,13 +11,21 @@
     public class ArgsParser
     {
         private string optionPrefix = "-";
+        private string assemblyName = string.Empty;
 
         public ArgsParser(List<Command> commands)
         {
-            var fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
+            var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
+            var fileVersion = FileVersionInfo.GetVersionInfo(assembly.Location);
+            assemblyName = fileVersion.OriginalFilename;
 
-            Header = $"{fileVersion.OriginalFilename} {fileVersion.ProductVersion} - {fileVersion.Comments}\n{fileVersion.LegalCopyright}";
+            Header = $"{assemblyName} {fileVersion.ProductVersion} - {fileVersion.Comments}\n{fileVersion.LegalCopyright}".Replace("©", "(c)");
             Commands = commands;
+        }
+
+        public ArgsParser(Type argsClass)
+            : this(argsClass.GetNestedTypes().Select(t => (Command)Activator.CreateInstance(t)).ToList())
+        {
         }
 
         public Command Result { get; private set; }
@@ -52,7 +60,7 @@
             }
             catch (ArgumentException e)
             {
-                Console.Error.WriteLine("ERROR: " + e.Message + "\n");
+                Console.Error.WriteLine("\nError: " + e.Message + "\n");
                 return false;
             }
 
@@ -62,22 +70,20 @@
 
         public void PrintUsage()
         {
-            Console.WriteLine(Header);
-            Console.WriteLine("\nAvailable commands are:\n");
+            PrintHeader();
+            Console.WriteLine($"usage: {assemblyName} <command> [options] [args]\n");
+            Console.WriteLine("Available commands:\n");
 
-            var paddingLen = Commands.Max(c => c.GetName().Length) + 4;
+            var paddingLen = Commands.Max(c => c.GetName().Length) + 3;
 
             foreach (var c in Commands)
             {
-                Console.WriteLine(string.Format("  {0}{1}\n", c.GetName().PadRight(paddingLen), c.GetDescription()));
+                Console.WriteLine($" {c.GetName().PadRight(paddingLen)}{c.GetDescription()}\n");
             }
         }
 
         public void PrintUsage(string commandName)
         {
-            Console.WriteLine(Header);
-            Console.WriteLine("\nThe options for the '{0}' command are:\n", commandName);
-
             Command command;
             try
             {
@@ -94,6 +100,10 @@
                 return;
             }
 
+            Console.WriteLine($"usage: {assemblyName} {commandName} [options] [args]\n");
+            Console.WriteLine($"{command.GetDescription()}\n");
+            Console.WriteLine("options:\n");
+
             var options = command.GetOptions();
             var paddingLen = options.Max(o => o.Name.Length);
 
@@ -101,14 +111,19 @@
             {
                 var a = o.GetCustomAttribute<CommandArgAttribute>();
 
-                Console.Write($"  {optionPrefix}{o.Name.PadRight(paddingLen)}    {a.HelpText}");
+                Console.Write($" {optionPrefix}{o.Name.PadRight(paddingLen)}   {a.HelpText}");
                 if (o.PropertyType == typeof(bool))
                 {
                     Console.Write(" (flag)");
                 }
 
-                Console.WriteLine(a.IsRequired ? " (required)\n" : "\n");
+                Console.WriteLine(a.IsRequired ? " (required)" : string.Empty);
             }
+        }
+
+        public void PrintHeader()
+        {
+            Console.WriteLine(Header);
         }
 
         private bool ParseCommandArgs(Command command, List<string> args)
@@ -144,7 +159,7 @@
                     if (pos >= args.Count)
                     {
                         PrintUsage(command.GetName());
-                        throw new ArgumentException($"option '{o.Name}' misses a parameter");
+                        throw new ArgumentException($"no argument specified for option '{o.Name}'");
                     }
 
                     o.SetValue(command, args.ElementAt(pos));
