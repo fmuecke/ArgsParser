@@ -1,4 +1,4 @@
-﻿namespace FMDev.ArgsParser
+﻿namespace fmdev.ArgsParser
 {
     using System;
     using System.Collections.Generic;

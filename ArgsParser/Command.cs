@@ -1,4 +1,4 @@
-﻿namespace FMDev.ArgsParser
+﻿namespace fmdev.ArgsParser
 {
     using System;
     using System.Collections.Generic;
@@ -8,29 +8,24 @@
 
     public abstract class Command
     {
-        public virtual string Name
+        public virtual string GetName()
         {
-            get
+            var name = this.GetType().Name;
+            name = name.Substring(0, 1).ToLowerInvariant() + name.Substring(1); // pascal case
+            if (name.Contains("Command"))
             {
-                var name = this.GetType().Name;
-                if (name.Contains("Command"))
-                {
-                    return name.Remove(name.LastIndexOf("Command", StringComparison.Ordinal));
-                }
-                else
-                {
-                    return name;
-                }
+                return name.Remove(name.LastIndexOf("Command", StringComparison.Ordinal));
+            }
+            else
+            {
+                return name;
             }
         }
 
-        public string Description
+        public string GetDescription()
         {
-            get
-            {
-                IEnumerable<Attribute> attributes = TypeDescriptor.GetAttributes(this).Cast<Attribute>();
-                return ((DescriptionAttribute)attributes.First(attribute => attribute is DescriptionAttribute)).Description;
-            }
+            IEnumerable<Attribute> attributes = TypeDescriptor.GetAttributes(this).Cast<Attribute>();
+            return ((DescriptionAttribute)attributes.First(attribute => attribute is DescriptionAttribute)).Description;
         }
 
         public IEnumerable<PropertyInfo> GetOptions()

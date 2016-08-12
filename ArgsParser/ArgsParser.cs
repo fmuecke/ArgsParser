@@ -1,4 +1,4 @@
-﻿namespace FMDev.ArgsParser
+﻿namespace fmdev.ArgsParser
 {
     using System;
     using System.Collections.Generic;
@@ -34,9 +34,9 @@
                 return false;
             }
 
-            var command = Commands.FirstOrDefault(c => string.Equals(c.Name, args[0], StringComparison.OrdinalIgnoreCase));
+            var command = Commands.FirstOrDefault(c => string.Equals(c.GetName(), args[0], StringComparison.OrdinalIgnoreCase));
 
-            if (string.IsNullOrWhiteSpace(command?.Name))
+            if (string.IsNullOrWhiteSpace(command?.GetName()))
             {
                 PrintUsage();
                 return false;
@@ -46,7 +46,7 @@
             {
                 if (!ParseCommandArgs(command, new ArraySegment<string>(args, 1, args.Length - 1).ToList()))
                 {
-                    PrintUsage(command.Name);
+                    PrintUsage(command.GetName());
                     return false;
                 }
             }
@@ -65,11 +65,11 @@
             Console.WriteLine(Header);
             Console.WriteLine("\nAvailable commands are:\n");
 
-            var paddingLen = Commands.Max(c => c.Name.Length) + 4;
+            var paddingLen = Commands.Max(c => c.GetName().Length) + 4;
 
             foreach (var c in Commands)
             {
-                Console.WriteLine(string.Format("  {0}{1}\n", c.Name.PadRight(paddingLen), c.Description));
+                Console.WriteLine(string.Format("  {0}{1}\n", c.GetName().PadRight(paddingLen), c.GetDescription()));
             }
         }
 
@@ -81,7 +81,7 @@
             Command command;
             try
             {
-                command = Commands.First(c => string.Equals(c.Name, commandName, StringComparison.OrdinalIgnoreCase));
+                command = Commands.First(c => string.Equals(c.GetName(), commandName, StringComparison.OrdinalIgnoreCase));
             }
             catch (InvalidOperationException)
             {
@@ -121,7 +121,7 @@
                 {
                     if (att.IsRequired)
                     {
-                        PrintUsage(command.Name);
+                        PrintUsage(command.GetName());
                         throw new ArgumentException($"required option '{o.Name}' is missing");
                     }
 
@@ -143,7 +143,7 @@
                 {
                     if (pos >= args.Count)
                     {
-                        PrintUsage(command.Name);
+                        PrintUsage(command.GetName());
                         throw new ArgumentException($"option '{o.Name}' misses a parameter");
                     }
 

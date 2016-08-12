@@ -1,10 +1,15 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using FluentAssertions;
+﻿// <copyright file="ArgsParserTest.cs" company="Florian Mücke">
+// Copyright (c) Florian Mücke. All rights reserved.
+// Licensed under the BSD license. See LICENSE file in the project root for full license information.
+// </copyright>
 
-namespace FMDev.ArgsParser.Test
+namespace fmdev.ArgsParser.Test
 {
+    using System;
+    using System.Collections.Generic;
+    using FluentAssertions;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class ArgsParserTest
     {
@@ -51,45 +56,5 @@ namespace FMDev.ArgsParser.Test
 
             p.Parse(new string[] { "TestRequiredBool" }).Should().BeFalse("a required bool param is missing");
         }
-    }
-
-    [System.ComponentModel.Description("Test command")]
-    public class TestCommand : Command
-    {
-        [CommandArg(HelpText = "toggles something on and off")]
-        public bool Switch { get; set; }
-
-        [CommandArg(HelpText = "foo bar blub blub", IsRequired = true)]
-        public string RequiredStringParam { get; set; }
-
-        [CommandArg(HelpText = "some things are iptional")]
-        public string OptionalStringParam { get; set; }
-    }
-
-    [System.ComponentModel.Description("Test command with a optional bool option")]
-    public class TestBoolCommand : Command
-    {
-        [CommandArg(HelpText = "toggles something on")]
-        public bool On { get; set; }
-    }
-
-    [System.ComponentModel.Description("Test command with a required bool option")]
-    public class TestRequiredBoolCommand : Command
-    {
-        [CommandArg(HelpText = "toggles something on", IsRequired = true)]
-        public bool On { get; set; }
-    }
-
-    [System.ComponentModel.Description("Other test command")]
-    public class OtherTestCommand : Command
-    {
-        [CommandArg(HelpText = "dispay additional information")]
-        public bool? Verbose { get; set; }
-
-        [CommandArg(HelpText = "foo bar blub blub", IsRequired = true)]
-        public string RequiredStringParam { get; set; }
-
-        [CommandArg(HelpText = "some things are iptional")]
-        public string OptionalStringParam { get; set; }
     }
 }
