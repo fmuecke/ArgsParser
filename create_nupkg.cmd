@@ -1,1 +1,1 @@
-nuget pack ArgsParser\ArgsParser.csproj -Prop Configuration=Release
+nuget pack ArgsParser\ArgsParser.csproj -Prop Configuration=Release -Build -Symbols
