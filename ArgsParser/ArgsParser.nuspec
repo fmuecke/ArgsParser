@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/fmuecke/ArgsParser</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>v0.2.4: switched back to .Net 4.5 for better compatibility</releaseNotes>
     <copyright>Copyright © 2016  Florian Mücke</copyright>
     <tags>commandline args parser</tags>
 	<dependencies />
